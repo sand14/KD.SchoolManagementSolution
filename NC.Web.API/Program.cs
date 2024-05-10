@@ -11,7 +11,7 @@ var config = new ConfigurationBuilder()
 // Add services to the container.
 
 builder.Services.ConfigureApplicationServices();
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddDbContext<SchoolContext>(options =>
     options.UseNpgsql(
         config.GetConnectionString("DefaultConnection")));
