@@ -12,8 +12,9 @@ namespace KD.Test.Services
         [OneTimeSetUp]
         public void Setup()
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             var options = new DbContextOptionsBuilder<SchoolContext>();
-            options.UseSqlServer("Server=DESKTOP-F92FLLN\\SQLEXPRESS;Database=School;Trusted_Connection=True");
+            options.UseNpgsql("Host=localhost;Database=pharmacy;Username=postgres;Password=post;Persist Security Info=True");
             _dbContext = new SchoolContext(options.Options);
 
             AutoMapperConfiguration.Init();
@@ -21,40 +22,39 @@ namespace KD.Test.Services
 
         }
 
+        [OneTimeTearDown]
+        public void Dispose()
+        {
+            _dbContext.Dispose();
+        }
         [Test]
         public void GetStudentsTest()
         {
             var service = new StudentService(_dbContext);
 
+            var student = CreateStudentModel("firstname", "lastname", DateTime.Now, false);
+            var createdStudent = service.CreateStudent(student);
+
             var students = service.GetStudents();
 
-            Assert.That(students.Any());
+            Assert.That(students, Has.Exactly(1).Items);
+
+            service.RemoveStudent(createdStudent.StudentId);
         }
 
         [Test]
         public void CreateStudentTest()
         {
-            StudentService service;
-            Guid createStudentId;
-            try
-            {
-                //arrange
-                service = new StudentService(_dbContext);
-
+            //arrange
+                var service = new StudentService(_dbContext);
+                var student = CreateStudentModel("firstname", "lastname", DateTime.Now, false);
+                var createdStudent = service.CreateStudent(student);
                 //assert
                 Assert.That(createdStudent != null);
                 Assert.That(createdStudent?.FirstName == student.FirstName);
                 Assert.That(createdStudent?.LastName == student.LastName);
-                //Assert.That(createdStudent?.Courses.Any() ?? false); 
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
+
                 service.RemoveStudent(createdStudent.StudentId);
-            }
         }
 
         public StudentModel CreateStudentModel(string firstName, string lastName, DateTime dateTime, bool includedCourse = true)

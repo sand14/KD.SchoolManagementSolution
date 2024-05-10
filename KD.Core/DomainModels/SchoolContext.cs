@@ -27,7 +27,7 @@ namespace KD.Core.DomainModels
         {
             modelBuilder.Entity<Course>(entity =>
             {
-                entity.Property(e => e.CourseId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.CourseId).HasDefaultValueSql("(md5(((random())::text || (clock_timestamp())::text)))::uuid");
 
                 entity.Property(e => e.Code)
                     .HasMaxLength(10)
@@ -43,7 +43,7 @@ namespace KD.Core.DomainModels
 
             modelBuilder.Entity<Grade>(entity =>
             {
-                entity.Property(e => e.GradeId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.GradeId).HasDefaultValueSql("(md5(((random())::text || (clock_timestamp())::text)))::uuid");
 
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.Grades)
@@ -65,7 +65,7 @@ namespace KD.Core.DomainModels
 
             modelBuilder.Entity<Student>(entity =>
             {
-                entity.Property(e => e.StudentId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.StudentId).HasDefaultValueSql("(md5(((random())::text || (clock_timestamp())::text)))::uuid");
 
                 entity.Property(e => e.FirstName).HasMaxLength(150);
 
@@ -91,7 +91,7 @@ namespace KD.Core.DomainModels
 
             modelBuilder.Entity<Teacher>(entity =>
             {
-                entity.Property(e => e.TeacherId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.TeacherId).HasDefaultValueSql("(md5(((random())::text || (clock_timestamp())::text)))::uuid");
 
                 entity.Property(e => e.Email).HasMaxLength(150);
 

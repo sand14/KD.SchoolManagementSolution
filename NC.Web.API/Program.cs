@@ -13,7 +13,7 @@ var config = new ConfigurationBuilder()
 builder.Services.ConfigureApplicationServices();
 
 builder.Services.AddDbContext<SchoolContext>(options =>
-    options.UseSqlServer(
+    options.UseNpgsql(
         config.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
